@@ -21,7 +21,8 @@ let arsenal = [{
         damage: 20,
         levelMin: 30,
         use: 25
-    }];
+    }
+];
 
 class Personnage {
     constructor(nom, life, level, xp) {
@@ -54,45 +55,60 @@ class Personnage {
         adversaire.life -= hit;
         if (hit == 0) {
             /// Points de VIE
-            console.log(adversaire.nom + " a évité le coup!");
+            let hurt = adversaire.nom + " a évité le coup! \n";
             // gain d' EXPERIENCE
             adversaire.xp += this.selectWeapon()["damage"] * this.level;
-            console.log(adversaire.nom + " gagne une expérience de " + (this.selectWeapon()["damage"] * this.level) + ".");
-
+            hurt += adversaire.nom + " gagne une expérience de " + (this.selectWeapon()["damage"] * this.level) + ".\n";
+            return hurt;
         } else {
             /// Points de VIE
-            console.log(adversaire.nom + " est blessé de " + hit + " points.");
-            console.log(adversaire.nom + " n'a plus que " + adversaire.life + " points de vie.");
+            let vie = adversaire.nom + " est blessé de " + hit + " points.\n";
+            vie += adversaire.nom + " n'a plus que " + adversaire.life + " points de vie.\n";
             this.xp += hit * this.level;
             // gain d' EXPERIENCE
-            console.log(this.nom + " à maintenant une expérience de " + this.xp + ".");
+            vie += this.nom + " à maintenant une expérience de " + this.xp + ".\n";
+            return vie;
         }
     }
 
     levelUp(adversaire) {
         if (this.xp >= 30 * this.level) {
             this.level++;
-            console.log("Super! tu est passé au niveau " + this.level);
+            return "Super! tu est passé au niveau " + this.level + '.\n';
         } else if (adversaire.xp >= 30 * this.level) {
             adversaire.level++;
-            console.log("Votre ennemi à gagné un niveau !");
+            return "Votre ennemi à gagné un niveau !.\n";
+        } else {
+
+            //il vous reste xx point pour le niveau sup
+            return '';
         }
     }
 
     attack(adversaire) {
-        console.log(this.nom + " attaque " + adversaire.nom + " avec l'arme " + this.selectWeapon()["title"] + "!");
 
-        this.receiveDamage(adversaire);
-        this.levelUp(adversaire);
+        let text = this.nom + " attaque " + adversaire.nom + " avec l'arme " + this.selectWeapon()["title"] + "!\n";
+
+        text += this.receiveDamage(adversaire);
+        text += this.levelUp(adversaire);
+        document.querySelector('#infoCast').innerHTML = text;
     }
 
 };
 
 // Appel CLASS
-
 let lily = new Personnage("Lily", 100, 1, 10, "");
 let oussama = new Personnage("Oussama", 100, 1, 12, "");
 
-lily.attack(oussama);
+function player1Attack() {
 
-//oussama.attack(lily);
+    lily.attack(oussama)
+}
+
+function player2Attack() {
+
+    oussama.attack(lily)
+}
+
+document.querySelector('#btn_player1').addEventListener('click', player1Attack);
+document.querySelector('#btn_player2').addEventListener('click', player2Attack);
